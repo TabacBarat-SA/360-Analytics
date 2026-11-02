@@ -20,7 +20,7 @@ function Bars({ data, x, label, fmt, highlight, lowerBetter }: { data: Row[]; x:
           <YAxis type="category" dataKey="name" width={200} tickLine={false} axisLine={false} />
           <Tooltip cursor={{ fill: 'var(--raised)' }} content={<ChartTip fmt={v => fmt(v)} />} />
           <Bar dataKey={x} name={label} radius={[0, 6, 6, 0]} animationDuration={800}>
-            {rows.map(r => <Cell key={r.model as string} fill={r.model === highlight ? 'var(--g2)' : r.model === 'multi' ? 'var(--g1)' : 'var(--line)'} />)}
+            {rows.map(r => <Cell key={r.model as string} fill={r.model === highlight ? 'var(--g2)' : r.model === 'multi' ? 'var(--g1)' : 'var(--g3)'} fillOpacity={r.model === highlight || r.model === 'multi' ? 1 : 0.55} />)}
           </Bar>
         </BarChart>
       </ResponsiveContainer>
@@ -75,7 +75,7 @@ export default function ResultsPage() {
               {jointClv && <> La red conjunta registra <strong className="text-text">{money(jointClv.RMSE as number)}</strong>.</>} Es una comparación del escenario, no una garantía comercial.
             </p>
             <Panel>
-              <p className="mb-4 text-sm text-muted">Error de previsión (RMSE): una barra menor es mejor. En verde, el mejor; en violeta, la red conjunta.</p>
+              <p className="mb-4 text-sm text-muted">Error de previsión (RMSE): una barra menor es mejor. En verde, el mejor; en violeta, la red conjunta; en ámbar, el resto de modelos.</p>
               <Bars data={clv} x="RMSE" label="Error RMSE" fmt={v => money(v)} highlight={bestClv.model as string} lowerBetter />
             </Panel>
             <DataTable columns={[
