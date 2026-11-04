@@ -60,7 +60,10 @@ def build_web(uv):
         npm = uv + [
             "run", "--no-project", "--with", "nodejs-wheel-binaries>=22,<23",
             "python", "-c",
-            "import sys, nodejs_wheel.executable as e; sys.exit(e.npm(sys.argv[1:]))",
+            # node debe estar en PATH: los scripts de npm (p.ej. esbuild) lo invocan.
+            "import os, sys, nodejs_wheel.executable as e; r = str(e.ROOT_DIR); "
+            "os.environ['PATH'] = os.pathsep.join([r, os.path.join(r, 'bin'), os.environ['PATH']]); "
+            "sys.exit(e.npm(sys.argv[1:]))",
         ]
     paso("Compilando la web (solo la primera vez)")
     run(npm + ["ci" if (WEB / "package-lock.json").exists() else "install"], cwd=WEB)
