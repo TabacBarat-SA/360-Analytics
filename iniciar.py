@@ -49,14 +49,22 @@ def ensure_uv():
     return [uv] if uv else [sys.executable, "-m", "uv"]
 
 
-def build_web():
+def build_web(uv):
     if DIST.exists():
         return
-    if not shutil.which("npm"):
-        fallo("falta Node.js (v20+) para compilar la web. Instalalo desde https://nodejs.org")
+    if shutil.which("npm"):
+        npm = ["npm"]
+    else:
+        # Sin Node.js: uv descarga uno portable (paquete PyPI) en un entorno temporal.
+        paso("Node.js no encontrado: usando Node portable via uv")
+        npm = uv + [
+            "run", "--no-project", "--with", "nodejs-wheel-binaries>=22,<23",
+            "python", "-c",
+            "import sys, nodejs_wheel.executable as e; sys.exit(e.npm(sys.argv[1:]))",
+        ]
     paso("Compilando la web (solo la primera vez)")
-    run(["npm", "ci" if (WEB / "package-lock.json").exists() else "install"], cwd=WEB)
-    run(["npm", "run", "build"], cwd=WEB)
+    run(npm + ["ci" if (WEB / "package-lock.json").exists() else "install"], cwd=WEB)
+    run(npm + ["run", "build"], cwd=WEB)
 
 
 def open_when_ready():
@@ -74,7 +82,7 @@ def main():
     uv = ensure_uv()
     paso("Instalando dependencias de Python (sin PyTorch)")
     run(uv + ["sync", "--inexact", "--no-install-package", "torch"])
-    build_web()
+    build_web(uv)
     paso(f"Servidor en {URL}  (Ctrl+C para detener)")
     threading.Thread(target=open_when_ready, daemon=True).start()
     try:
