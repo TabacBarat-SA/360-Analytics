@@ -16,14 +16,16 @@ function useDebounced<T>(value: T, ms = 250) {
 }
 
 export default function CampaignPage() {
-  const { money, source, currency } = useApp()
+  const { money, source, currency, fx } = useApp()
   const groups = useScenarioApi<Groups>('groups')
   const [goal, setGoal] = useState(GOALS[0])
   const [picked, setPicked] = useState<number[] | null>(null)
   const [minClv, setMinClv] = useState(0)
   const [limit, setLimit] = useState(100)
   const [recency, setRecency] = useState<number | null>(null)
-  const [cost, setCost] = useState(0)
+  const [cost, setCost] = useState(0) // siempre en BRL (lo que espera la API)
+  const [costText, setCostText] = useState('0')
+  useEffect(() => { setCostText(String(+(cost * fx).toFixed(4))) }, [fx]) // eslint-disable-line react-hooks/exhaustive-deps
   const [ack, setAck] = useState(false)
 
   const total = groups.data?.total ?? 0
@@ -68,7 +70,7 @@ export default function CampaignPage() {
           <div>
             <label htmlFor="min" className="mb-1 flex justify-between font-medium">Gasto previsto mínimo <span className="num text-muted">{money(minClv)}</span></label>
             <input id="min" type="range" min={0} max={1500} step={25} value={minClv} onChange={e => setMinClv(+e.target.value)} />
-            <p className="text-xs text-muted">Umbral en reales (BRL) por cliente: {num(minClv)} BRL.</p>
+            <p className="text-xs text-muted">Umbral por cliente: {money(minClv)}{currency !== 'BRL' && ` (${num(minClv)} BRL)`}.</p>
           </div>
           <div>
             <label htmlFor="limit" className="mb-1 flex justify-between font-medium">Máximo de clientes <span className="num text-muted">{num(limit)}</span></label>
@@ -87,8 +89,9 @@ export default function CampaignPage() {
             )}
           </div>
           <div>
-            <label htmlFor="cost" className="mb-1 block font-medium">Coste supuesto por contacto (BRL)</label>
-            <input id="cost" className="field num" type="number" min={0} step={0.1} value={cost} onChange={e => setCost(Math.max(0, +e.target.value))} />
+            <label htmlFor="cost" className="mb-1 block font-medium">Coste supuesto por contacto ({currency})</label>
+            <input id="cost" className="field num" type="number" min={0} step={0.1} value={costText}
+              onChange={e => { setCostText(e.target.value); setCost(Math.max(0, +e.target.value) / fx) }} />
             <p className="mt-1 text-xs text-muted">Es un supuesto tuyo. El sistema no conoce costes reales ni calcula efecto incremental.</p>
           </div>
         </Panel>

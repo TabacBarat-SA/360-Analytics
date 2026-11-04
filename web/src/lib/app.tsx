@@ -9,6 +9,7 @@ interface AppState {
   theme: Theme; toggleTheme: () => void
   currency: Currency; setCurrency: (c: Currency) => void; canConvert: boolean
   money: (brl: number, digits?: number) => string
+  fx: number // unidades de la moneda activa por 1 BRL
   refresh: () => void; version: number
 }
 
@@ -41,7 +42,7 @@ export function AppProvider({ children }: { children: ReactNode }) {
     source, setSource: s => { write('360-source', s); setSourceState(s) },
     theme, toggleTheme: () => setTheme(t => { const n = t === 'dark' ? 'light' : 'dark'; write('360-theme', n); return n }),
     currency: effective, setCurrency: c => { write('360-currency', c); setCurrencyState(c) }, canConvert: !!rate,
-    money, version,
+    money, fx: effective === 'USD' ? (rate as number) : 1, version,
     refresh: () => { clearApiCache(); setVersion(v => v + 1) },
   }), [source, theme, effective, rate, money, version])
 
