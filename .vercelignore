@@ -12,3 +12,5 @@ tests
 docs
 neural-network
 .pytest_cache
+pyproject.toml
+uv.lock
