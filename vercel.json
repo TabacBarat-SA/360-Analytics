@@ -3,13 +3,20 @@
   "buildCommand": "cd web && npm ci && npm run build",
   "outputDirectory": "web/dist",
   "rewrites": [
-    { "source": "/api/(.*)", "destination": "/api/index" },
-    { "source": "/((?!assets/).*)", "destination": "/index.html" }
+    {
+      "source": "/api/(.*)",
+      "destination": "/api/index"
+    },
+    {
+      "source": "/((?!assets/).*)",
+      "destination": "/index.html"
+    }
   ],
   "functions": {
     "api/index.py": {
       "includeFiles": "{cliente360,services,data/processed,data/raw/olist_{customers,order_items,order_payments,orders,products}_dataset.csv,data/raw/product_category_name_translation.csv,data/synthetic,artifacts,reports}/**",
-      "maxDuration": 30
+      "maxDuration": 30,
+      "excludeFiles": "{web,node_modules,neural-network,data_processing,docs,tests,scripts,.git,.venv}/**,data/raw/olist_{geolocation,order_reviews,sellers}_dataset.csv,data/synthetic/latent_profiles_AUDIT_ONLY.csv,**/*.pt,**/*.png"
     }
   }
 }
