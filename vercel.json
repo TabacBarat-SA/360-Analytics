@@ -16,7 +16,7 @@
     "api/index.py": {
       "includeFiles": "{cliente360,services,data/processed,data/raw/olist_{customers,order_items,order_payments,orders,products}_dataset.csv,data/raw/product_category_name_translation.csv,data/synthetic,artifacts,reports}/**",
       "maxDuration": 30,
-      "excludeFiles": "{web/**,node_modules/**,neural-network/**,data_processing/**,docs/**,tests/**,scripts/**,.git/**,.venv/**,data/raw/olist_geolocation_dataset.csv,data/raw/olist_order_reviews_dataset.csv,data/raw/olist_sellers_dataset.csv,data/synthetic/latent_profiles_AUDIT_ONLY.csv,**/*.pt,**/*.png}"
+      "excludeFiles": "{web/**,data_processing/**,scripts/**,neural-network/**,**/*.pt,**/*.png}"
     }
   }
 }

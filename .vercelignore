@@ -14,3 +14,5 @@ neural-network
 .pytest_cache
 pyproject.toml
 uv.lock
+data_processing
+scripts
