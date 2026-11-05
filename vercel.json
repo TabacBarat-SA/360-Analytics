@@ -1,6 +1,6 @@
 {
   "framework": null,
-  "buildCommand": "cd web && npm ci && npm run build",
+  "buildCommand": "cd web && npm ci && npm run build && rm -rf node_modules",
   "outputDirectory": "web/dist",
   "rewrites": [
     {
